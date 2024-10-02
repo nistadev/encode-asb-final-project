@@ -1,4 +1,4 @@
-# **Decentralized Membership Subscription Platform (Proxy Pattern) by Team 4 **
+# **Decentralized Membership Subscription Platform (Proxy Pattern) by Team 4**
 
 This project implements a decentralized membership subscription platform inspired by services like Twitch and Patreon, using Ethereum smart contracts. The platform allows creators to offer tiered subscription plans to their supporters and automates monthly payments using a trustless, blockchain-based system.
 
@@ -89,7 +89,7 @@ If the platform needs to upgrade its logic, deploy a new version of the **Subscr
 - More advanced subscription management features (such as subscription pausing or one-time donations).
 - Integration with content platforms to automate the reward points distribution based on user activity metrics.
 
-### **Team Members id
+### Team Members id
 - u9uZu4 
 - XMeqxJ 
 - h1oFbD 
