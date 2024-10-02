@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.27;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-error NorAuthorized();
+error NotAuthorized();
 
 contract CreatorPoints is ERC20 {
     address public platformAddress;
@@ -21,7 +21,7 @@ contract CreatorPoints is ERC20 {
         // Only the platform or creator can reward points
         require(
             msg.sender == platformAddress || msg.sender == creatorAddress,
-            NorAuthorized()
+            NotAuthorized()
         );
 
         _mint(user, amount);
@@ -31,7 +31,7 @@ contract CreatorPoints is ERC20 {
         // Points can be burned by the platform/creator (e.g., when points are redeemed)
         require(
             msg.sender == platformAddress || msg.sender == creatorAddress,
-            NorAuthorized()
+            NotAuthorized()
         );
 
         _burn(user, amount);
