@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 enum Tier {
     Tier1,
@@ -9,6 +9,7 @@ enum Tier {
     Tier3,
     None
 }
+
 struct Subscription {
     Tier tier;
     bool isActive;
@@ -29,23 +30,26 @@ contract SubscriptionLogic {
     mapping(address => Subscription) public subscriptions;
     mapping(Tier => uint256) public tierPrices;
 
-    event Subscribed(address indexed user, Tier tier, uint256 amount);
-    event Renewed(address indexed user, Tier tier, uint256 amount);
+    event Subscribed(address indexed user, Tier indexed tier, uint256 amount);
+    event Renewed(address indexed user, Tier indexed tier, uint256 amount);
     event SubscriptionExpired(address indexed user);
 
     constructor(
         IERC20 _platformToken,
         address _platformAddress,
-        uint256 _platformFee
+        uint256 _platformFee,
+        tier1Price,
+        tier2Price,
+        tier3Price
     ) {
         platformToken = _platformToken;
         platformAddress = _platformAddress;
         platformFee = _platformFee;
 
         // Set tier prices (for example: 10, 20, and 50 tokens for tiers 1, 2, and 3)
-        tierPrices[Tier.Tier1] = 0.01 ether;
-        tierPrices[Tier.Tier2] = 0.1 ether;
-        tierPrices[Tier.Tier3] = 0.25 ether;
+        tierPrices[Tier.Tier1] = tier1Price;
+        tierPrices[Tier.Tier2] = tier2Price;
+        tierPrices[Tier.Tier3] = tier3Price;
     }
 
     modifier onlyActive(address user) {
