@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import creatorPointsAbi from "../abi/CreatorPoints.json";
 import { ethers } from "ethers"; // Directly import from ethers v6
+import { REWARDS_ADDRESS } from "../constants";
 
 const Creator = ({ signer }) => {
   const [pointsAmount, setPointsAmount] = useState("");
@@ -12,7 +13,7 @@ const Creator = ({ signer }) => {
   const mintRewardPoints = async () => {
     try {
       const creatorPointsContract = new ethers.Contract(
-        "0xYourCreatorPointsContractAddress", // Replace with your contract address
+        REWARDS_ADDRESS, // Replace with your contract address
         creatorPointsAbi,
         signer
       );
@@ -31,7 +32,7 @@ const Creator = ({ signer }) => {
   const createReward = async () => {
     try {
       const creatorPointsContract = new ethers.Contract(
-        "0xYourCreatorPointsContractAddress", // Replace with your contract address
+        REWARDS_ADDRESS, // Replace with your contract address
         creatorPointsAbi,
         signer
       );

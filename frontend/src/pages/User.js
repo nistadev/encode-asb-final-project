@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { parseUnits, ethers } from "ethers"; // Directly import from ethers.js v6
+import { ethers } from "ethers"; // Directly import from ethers.js v6
 import subscriptionAbi from "../abi/SubscriptionLogic.json";
 import creatorPointsAbi from "../abi/CreatorPoints.json";
+import { REWARDS_ADDRESS, SUBSCRIPTION_ADDRESS } from "../constants";
 
 const User = ({ signer }) => {
   const [tier, setTier] = useState(1);
   const [creatorAddress, setCreatorAddress] = useState(""); // New state for creator address
   const [availablePoints, setAvailablePoints] = useState(0); // New state for available points
   const [rewardDescription, setRewardDescription] = useState(""); // New state for reward description
-  const [rewardAmount, setRewardAmount] = useState(""); // New state for reward amount
 
   // Function to fetch available points
   const fetchAvailablePoints = async () => {
     try {
       const creatorPointsContract = new ethers.Contract(
-        "0xYourCreatorPointsContractAddress", // Replace with your contract address
+        REWARDS_ADDRESS, // Replace with your contract address
         creatorPointsAbi,
         signer
       );
@@ -33,7 +33,7 @@ const User = ({ signer }) => {
   const subscribeToTier = async () => {
     try {
       const subscriptionContract = new ethers.Contract(
-        "0xe4eC5E2A324bBBe80b2d80735D843112C69F5b05", // Replace with your contract address
+        SUBSCRIPTION_ADDRESS, // Replace with your contract address
         subscriptionAbi,
         signer
       );
@@ -52,7 +52,7 @@ const User = ({ signer }) => {
   const redeemAllPoints = async () => {
     try {
       const creatorPointsContract = new ethers.Contract(
-        "0xYourCreatorPointsContractAddress", // Replace with your contract address
+        REWARDS_ADDRESS, // Replace with your contract address
         creatorPointsAbi,
         signer
       );
@@ -71,7 +71,7 @@ const User = ({ signer }) => {
   const redeemReward = async () => {
     try {
       const creatorPointsContract = new ethers.Contract(
-        "0xYourCreatorPointsContractAddress", // Replace with your contract address
+        REWARDS_ADDRESS, // Replace with your contract address
         creatorPointsAbi,
         signer
       );

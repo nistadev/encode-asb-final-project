@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { parseUnits, ethers } from 'ethers'; // Directly import from ethers v6
 import subscriptionAbi from '../abi/SubscriptionLogic.json';
+import { SUBSCRIPTION_ADDRESS } from '../constants';
 
 const PlatformOwner = ({ signer }) => {
   const [tierPrice, setTierPrice] = useState('');
@@ -11,7 +12,7 @@ const PlatformOwner = ({ signer }) => {
   const setSubscriptionTierPrice = async () => {
     try {
       const contract = new ethers.Contract(
-        '0xe4eC5E2A324bBBe80b2d80735D843112C69F5b05', // Replace with your contract address
+        SUBSCRIPTION_ADDRESS, // Replace with your contract address
         subscriptionAbi,
         signer
       );
@@ -29,7 +30,7 @@ const PlatformOwner = ({ signer }) => {
   const addCreator = async () => {
     try {
       const contract = new ethers.Contract(
-        '0xe4eC5E2A324bBBe80b2d80735D843112C69F5b05', // Replace with your contract address
+        SUBSCRIPTION_ADDRESS, // Replace with your contract address
         subscriptionAbi,
         signer
       );
