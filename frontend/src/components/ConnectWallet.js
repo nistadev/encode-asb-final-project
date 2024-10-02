@@ -4,8 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import SubscriptionLogic from "../abi/SubscriptionLogic.json"; // Ensure the ABI path is correct
 import { useNavigate } from "react-router-dom";
-
-const contractAddress = "0xe4eC5E2A324bBBe80b2d80735D843112C69F5b05"; // Replace with your contract address
+import { SUBSCRIPTION_ADDRESS } from "../constants";
 
 const ConnectWallet = () => {
   const [userAddress, setUserAddress] = useState("");
@@ -18,7 +17,7 @@ const ConnectWallet = () => {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const contract = new ethers.Contract(
-        contractAddress,
+        SUBSCRIPTION_ADDRESS,
         SubscriptionLogic.abi,
         signer
       );
