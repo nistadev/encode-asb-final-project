@@ -6,7 +6,7 @@ import SubscriptionLogic from "../abi/SubscriptionLogic.json"; // Ensure the ABI
 import { useNavigate } from "react-router-dom";
 import { SUBSCRIPTION_ADDRESS } from "../constants";
 
-const ConnectWallet = () => {
+const ConnectWallet = ({ onSignerChanged }) => {
   const [userAddress, setUserAddress] = useState("");
   const navigate = useNavigate();
 
@@ -21,6 +21,8 @@ const ConnectWallet = () => {
         SubscriptionLogic.abi,
         signer
       );
+
+      onSignerChanged(signer);
 
       // Get platform owner address
       const platformOwnerAddress = await contract.getPlatformAddress();

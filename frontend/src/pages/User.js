@@ -8,14 +8,14 @@ const User = ({ signer }) => {
   const [tier, setTier] = useState(1);
   const [creatorAddress, setCreatorAddress] = useState(""); // New state for creator address
   const [availablePoints, setAvailablePoints] = useState(0); // New state for available points
-  const [rewardDescription, setRewardDescription] = useState(""); // New state for reward description
+  const [rewardId, setRewardId] = useState(""); // New state for reward description
 
   // Function to fetch available points
   const fetchAvailablePoints = async () => {
     try {
       const creatorPointsContract = new ethers.Contract(
         REWARDS_ADDRESS, // Replace with your contract address
-        creatorPointsAbi,
+        creatorPointsAbi.abi,
         signer
       );
       const points = await creatorPointsContract.balanceOf(signer.address); // Get user's available points
@@ -34,7 +34,7 @@ const User = ({ signer }) => {
     try {
       const subscriptionContract = new ethers.Contract(
         SUBSCRIPTION_ADDRESS, // Replace with your contract address
-        subscriptionAbi,
+        subscriptionAbi.abi,
         signer
       );
       const tx = await subscriptionContract.subscribe(tier, {
@@ -48,41 +48,19 @@ const User = ({ signer }) => {
     }
   };
 
-  // Function to redeem all available reward points
-  const redeemAllPoints = async () => {
-    try {
-      const creatorPointsContract = new ethers.Contract(
-        REWARDS_ADDRESS, // Replace with your contract address
-        creatorPointsAbi,
-        signer
-      );
-
-      const tx = await creatorPointsContract.burnPoints(availablePoints);
-      await tx.wait();
-      alert("All points redeemed successfully!");
-      setAvailablePoints(0); // Reset available points after redeeming
-    } catch (error) {
-      console.error("Error redeeming points:", error);
-      alert("Error redeeming points");
-    }
-  };
-
   // Function to redeem a reward from the selected creator
   const redeemReward = async () => {
     try {
       const creatorPointsContract = new ethers.Contract(
         REWARDS_ADDRESS, // Replace with your contract address
-        creatorPointsAbi,
+        creatorPointsAbi.abi,
         signer
       );
 
-      const tx = await creatorPointsContract.redeemReward(
-        creatorAddress,
-        rewardDescription
-      );
+      const tx = await creatorPointsContract.redeemReward(rewardId);
       await tx.wait();
       alert("Reward redeemed successfully!");
-      setRewardDescription(""); // Clear input after redeeming
+      setRewardId(""); // Clear input after redeeming
     } catch (error) {
       console.error("Error redeeming reward:", error);
       alert("Error redeeming reward");
@@ -128,32 +106,19 @@ const User = ({ signer }) => {
         </button>
       </div>
 
-      {/* Redeem Points Section */}
-      <div className="mb-6 bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-        <h3 className="text-2xl font-semibold mb-4 text-gray-800">
-          Redeem Points
-        </h3>
-        <p className="mb-2">Available Points: {availablePoints}</p>
-        <button
-          onClick={redeemAllPoints}
-          className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg"
-        >
-          Redeem All Points
-        </button>
-      </div>
-
       {/* Redeem Reward Section */}
       <div className="mb-6 bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <h3 className="text-2xl font-semibold mb-4 text-gray-800">
           Redeem Reward
         </h3>
+        <p className="mb-2">Available Points: {availablePoints}</p>
         <label className="block mb-4">
-          Reward Description:
+          Reward Id (given by creator):
           <input
-            type="text"
-            value={rewardDescription}
-            onChange={(e) => setRewardDescription(e.target.value)}
-            placeholder="Enter Reward Description"
+            type="number"
+            value={rewardId}
+            onChange={(e) => setRewardId(e.target.value)}
+            placeholder="Enter Reward Id"
             className="border border-gray-300 rounded-lg p-2 w-full"
           />
         </label>

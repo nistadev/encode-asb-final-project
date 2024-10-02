@@ -7,17 +7,20 @@ const Creator = ({ signer }) => {
   const [pointsAmount, setPointsAmount] = useState("");
   const [userAddress, setUserAddress] = useState(""); // New state for user address
   const [rewardAmount, setRewardAmount] = useState(""); // New state for reward amount
-  const [rewardDescription, setRewardDescription] = useState(""); // New state for reward description
+  const [rewardId, setRewardId] = useState(-1); // New state for reward description
 
   // Function to mint reward points for the user
   const mintRewardPoints = async () => {
     try {
       const creatorPointsContract = new ethers.Contract(
         REWARDS_ADDRESS, // Replace with your contract address
-        creatorPointsAbi,
+        creatorPointsAbi.abi,
         signer
       );
-      const tx = await creatorPointsContract.mintPoints(userAddress, pointsAmount);
+      const tx = await creatorPointsContract.rewardUser(
+        userAddress,
+        pointsAmount
+      );
       await tx.wait();
       alert("Points minted successfully!");
       setPointsAmount(""); // Clear input after minting
@@ -33,15 +36,18 @@ const Creator = ({ signer }) => {
     try {
       const creatorPointsContract = new ethers.Contract(
         REWARDS_ADDRESS, // Replace with your contract address
-        creatorPointsAbi,
+        creatorPointsAbi.abi,
         signer
       );
       // Call the function to create a reward in the contract
-      const tx = await creatorPointsContract.createReward(rewardDescription, rewardAmount);
+      const tx = await creatorPointsContract.createReward(
+        rewardId,
+        rewardAmount
+      );
       await tx.wait();
       alert("Reward created successfully!");
       setRewardAmount(""); // Clear input after creating
-      setRewardDescription(""); // Clear description after creating
+      setRewardId(""); // Clear description after creating
     } catch (error) {
       console.error("Error creating reward:", error);
       alert("Error creating reward");
@@ -50,11 +56,15 @@ const Creator = ({ signer }) => {
 
   return (
     <div className="flex flex-col items-center p-8 bg-gray-100 min-h-screen bg-gradient-to-r from-purple-300 to-blue-400">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Creator Dashboard</h2>
+      <h2 className="text-3xl font-bold mb-6 text-gray-800">
+        Creator Dashboard
+      </h2>
 
       {/* Mint Reward Points Section */}
       <div className="mb-6 bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-        <h3 className="text-2xl font-semibold mb-4 text-gray-800">Mint Points for User</h3>
+        <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+          Mint Points for User
+        </h3>
         <label className="block mb-4">
           User Address:
           <input
@@ -85,13 +95,15 @@ const Creator = ({ signer }) => {
 
       {/* Create Reward Section */}
       <div className="mb-6 bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-        <h3 className="text-2xl font-semibold mb-4 text-gray-800">Create Reward</h3>
+        <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+          Create Reward
+        </h3>
         <label className="block mb-4">
-          Reward Description:
+          Reward Id (integer number):
           <input
             type="text"
-            value={rewardDescription}
-            onChange={(e) => setRewardDescription(e.target.value)}
+            value={rewardId}
+            onChange={(e) => setRewardId(e.target.value)}
             placeholder="Enter Reward Description"
             className="border border-gray-300 rounded-lg p-2 w-full"
           />

@@ -13,7 +13,7 @@ const PlatformOwner = ({ signer }) => {
     try {
       const contract = new ethers.Contract(
         SUBSCRIPTION_ADDRESS, // Replace with your contract address
-        subscriptionAbi,
+        subscriptionAbi.abi,
         signer
       );
 
@@ -31,7 +31,7 @@ const PlatformOwner = ({ signer }) => {
     try {
       const contract = new ethers.Contract(
         SUBSCRIPTION_ADDRESS, // Replace with your contract address
-        subscriptionAbi,
+        subscriptionAbi.abi,
         signer
       );
 
