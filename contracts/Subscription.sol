@@ -29,7 +29,7 @@ contract SubscriptionLogic {
     IERC20 public platformToken;
     address public platformAddress;
     uint256 public platformFee; // In basis points (e.g., 500 = 5%)
-    
+
     // Creator mapping
     mapping(address => bool) public creators;
     mapping(address => Subscription) public subscriptions;
@@ -70,6 +70,14 @@ contract SubscriptionLogic {
         _;
     }
 
+    function getPlatformAddress() external view returns (address) {
+        return platformAddress; // Return the platform owner address
+    }
+
+    function addressIsCreator(address _creator) external view returns (bool) {
+        return creators[_creator];
+    }
+
     function subscribe(Tier _tier) external {
         require(uint8(_tier) < uint8(Tier.None), InvalidTier());
 
@@ -100,7 +108,9 @@ contract SubscriptionLogic {
         emit Renewed(msg.sender, sub.tier, price);
     }
 
-    function checkSubscriptionStatus(address user) external view returns (bool) {
+    function checkSubscriptionStatus(
+        address user
+    ) external view returns (bool) {
         Subscription memory sub = subscriptions[user];
         if (!sub.isActive || block.timestamp > sub.nextPaymentDue) {
             return false;
