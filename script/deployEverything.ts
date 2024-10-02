@@ -8,19 +8,24 @@ async function main() {
   );
   console.log("Signer: ", signer.address);
   // return;
-  const Erc20 = await ethers.getContractFactory("Erc20Example");
-  const erc20 = await Erc20.deploy();
+  const Erc20 = (await ethers.getContractFactory("Erc20Example")).connect(
+    signer
+  );
+  const erc20 = await Erc20.deploy({ gasLimit: 100000 });
   const erc20Address = await erc20.getAddress();
   console.log("Erc20: ", erc20Address);
 
-  const Subscription = await ethers.getContractFactory("SubscriptionLogic");
+  const Subscription = (
+    await ethers.getContractFactory("SubscriptionLogic")
+  ).connect(signer);
   const sub = await Subscription.deploy(
     erc20Address,
     erc20Address,
     500,
     1,
     2,
-    5
+    5,
+    { gasLimit: 100000 }
   );
   console.log("Subscription: ", await sub.getAddress());
 }
