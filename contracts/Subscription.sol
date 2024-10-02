@@ -20,6 +20,8 @@ struct Subscription {
 error SubscriptionNotActive();
 error InvalidTier();
 error PaymentNotDue();
+error NotACreator();
+error InvalidCreatorAddress();
 
 contract SubscriptionLogic {
     uint256 public constant ONE_MONTH = 30 days;
@@ -27,12 +29,18 @@ contract SubscriptionLogic {
     IERC20 public platformToken;
     address public platformAddress;
     uint256 public platformFee; // In basis points (e.g., 500 = 5%)
+
+    // Creator mapping
+    mapping(address => bool) public creators;
     mapping(address => Subscription) public subscriptions;
     mapping(Tier => uint256) public tierPrices;
+    mapping(address => uint256) public creatorBalances; // Store balances for creators
 
     event Subscribed(address indexed user, Tier indexed tier, uint256 amount);
     event Renewed(address indexed user, Tier indexed tier, uint256 amount);
     event SubscriptionExpired(address indexed user);
+    event CreatorAdded(address indexed creator);
+    event FeesWithdrawn(address indexed creator, uint256 amount);
 
     constructor(
         IERC20 _platformToken,
@@ -57,6 +65,19 @@ contract SubscriptionLogic {
         _;
     }
 
+    modifier onlyCreator() {
+        require(creators[msg.sender], NotACreator());
+        _;
+    }
+
+    function getPlatformAddress() external view returns (address) {
+        return platformAddress; // Return the platform owner address
+    }
+
+    function addressIsCreator(address _creator) external view returns (bool) {
+        return creators[_creator];
+    }
+
     function subscribe(Tier _tier) external {
         require(uint8(_tier) < uint8(Tier.None), InvalidTier());
 
@@ -78,7 +99,7 @@ contract SubscriptionLogic {
         Subscription storage sub = subscriptions[msg.sender];
         require(block.timestamp >= sub.nextPaymentDue, PaymentNotDue());
 
-        uint price = sub.lastPaymentAmount;
+        uint256 price = sub.lastPaymentAmount;
 
         _applyFee(price);
 
@@ -102,6 +123,13 @@ contract SubscriptionLogic {
         emit SubscriptionExpired(msg.sender);
     }
 
+    // Function to add a creator
+    function addCreator(address creator) external {
+        require(creator != address(0), "Invalid creator address");
+        creators[creator] = true;
+        emit CreatorAdded(creator);
+    }
+
     function setPlatformFee(uint256 newFee) external {
         // Access control: Only platform admin can change the fee
         platformFee = newFee;
@@ -112,12 +140,23 @@ contract SubscriptionLogic {
         tierPrices[_tier] = newPrice;
     }
 
-    function _applyFee(uint price) internal {
+    function _applyFee(uint256 price) internal {
         // Transfer the subscription fee
         uint256 feeAmount = (price * platformFee) / 10000;
         uint256 creatorAmount = price - feeAmount;
 
         platformToken.transferFrom(msg.sender, platformAddress, feeAmount);
-        platformToken.transferFrom(msg.sender, address(this), creatorAmount);
+        creatorBalances[msg.sender] += creatorAmount; // Accumulate creator's earnings
+    }
+
+    // Function for creators to withdraw their fees
+    function withdrawFees() external onlyCreator {
+        uint256 amount = creatorBalances[msg.sender];
+        require(amount > 0, "No fees to withdraw");
+
+        creatorBalances[msg.sender] = 0; // Reset the balance before transfer
+        platformToken.transfer(msg.sender, amount); // Transfer the tokens to the creator
+
+        emit FeesWithdrawn(msg.sender, amount);
     }
 }
