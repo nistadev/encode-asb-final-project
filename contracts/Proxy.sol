@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+error UnsetImplementation();
+
 contract Proxy {
     address public implementation;
 
@@ -15,7 +17,7 @@ contract Proxy {
 
     fallback() external payable {
         address impl = implementation;
-        require(impl != address(0), "Implementation contract not set");
+        require(impl != address(0), UnsetImplementation());
 
         assembly {
             let ptr := mload(0x40)
@@ -24,8 +26,12 @@ contract Proxy {
             let size := returndatasize()
             returndatacopy(ptr, 0, size)
             switch result
-            case 0 { revert(ptr, size) }
-            default { return(ptr, size) }
+            case 0 {
+                revert(ptr, size)
+            }
+            default {
+                return(ptr, size)
+            }
         }
     }
 }
