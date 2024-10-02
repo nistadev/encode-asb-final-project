@@ -8,10 +8,14 @@ async function main() {
   );
   console.log("Signer: ", signer.address);
   // return;
-  const Erc20 = (await ethers.getContractFactory("Erc20Example")).connect(
+  const Erc20 = (await ethers.getContractFactory("CreatorPoints")).connect(
     signer
   );
-  const erc20 = await Erc20.deploy({ gasLimit: 800000 });
+  const erc20 = await Erc20.deploy(
+    "0x05c1124CD705264c60b833951C6D5890b92f53cb",
+    "0xB6621b2fe9515C70638C0FE667cD396aC128DfE0",
+    { gasLimit: 900000 }
+  );
   const erc20Address = await erc20.getAddress();
   const ercResponse = await erc20.deploymentTransaction();
   let ercReceipt = await ercResponse!.wait();
@@ -23,8 +27,8 @@ async function main() {
     await ethers.getContractFactory("SubscriptionLogic")
   ).connect(signer);
   const sub = await Subscription.deploy(
-    erc20Address,
-    erc20Address,
+    "0xb2f902825D87efEE4E3eF6873b071F7FA86ca9aB",
+    "0x05c1124CD705264c60b833951C6D5890b92f53cb",
     500,
     1,
     2,
