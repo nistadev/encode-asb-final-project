@@ -11,8 +11,12 @@ async function main() {
   const Erc20 = (await ethers.getContractFactory("Erc20Example")).connect(
     signer
   );
-  const erc20 = await Erc20.deploy({ gasLimit: 100000 });
+  const erc20 = await Erc20.deploy({ gasLimit: 800000 });
   const erc20Address = await erc20.getAddress();
+  const ercResponse = await erc20.deploymentTransaction();
+  let ercReceipt = await ercResponse!.wait();
+  const ercGasUsed = ercReceipt?.gasUsed;
+  console.log("GAS : ", ercGasUsed);
   console.log("Erc20: ", erc20Address);
 
   const Subscription = (
@@ -25,8 +29,12 @@ async function main() {
     1,
     2,
     5,
-    { gasLimit: 100000 }
+    { gasLimit: 800000 }
   );
+  const subResponse = await sub.deploymentTransaction();
+  let receipt = await subResponse!.wait();
+  const subGasUsed = receipt?.gasUsed;
+  console.log("GAS : ", subGasUsed);
   console.log("Subscription: ", await sub.getAddress());
 }
 
