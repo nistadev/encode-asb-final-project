@@ -38,9 +38,9 @@ contract SubscriptionLogic {
         IERC20 _platformToken,
         address _platformAddress,
         uint256 _platformFee,
-        tier1Price,
-        tier2Price,
-        tier3Price
+        uint256 tier1Price,
+        uint256 tier2Price,
+        uint256 tier3Price
     ) {
         platformToken = _platformToken;
         platformAddress = _platformAddress;
